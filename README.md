@@ -12,7 +12,8 @@ If you find the content helpful or interesting, please consider giving the repos
 **Write Your Own wc Tool** [ [Challenge Link](https://codingchallenges.fyi/challenges/challenge-wc) ] [ [Code](https://github.com/Abhi3685/Coding-Challenges/tree/main/Challenge%231) ] \
 **Write Your Own Web Server** [ [Challenge Link](https://codingchallenges.fyi/challenges/challenge-webserver) ] [ [Code](https://github.com/Abhi3685/Coding-Challenges/tree/main/WebServer) ] \
 **Write Your Own Memcached Server** [ [Challenge Link](https://codingchallenges.fyi/challenges/challenge-memcached/) ] [ [Code](https://github.com/Abhi3685/Coding-Challenges/tree/main/Memcached) ] \
-**Write Your Own CronTab Tool** [ [Challenge Link](https://codingchallenges.fyi/challenges/challenge-cron/) ] [ [Code](https://github.com/Abhi3685/Coding-Challenges/tree/main/CronTab) ] 
+**Write Your Own CronTab Tool** [ [Challenge Link](https://codingchallenges.fyi/challenges/challenge-cron/) ] [ [Code](https://github.com/Abhi3685/Coding-Challenges/tree/main/CronTab) ] \
+**Write Your Own Social Media Tool** [ [Challenge Link](https://codingchallenges.fyi/challenges/challenge-sm-tool/) ] [ [Code](https://github.com/Abhi3685/Coding-Challenges/tree/main/SocialMedia) ]
 
 .
 .
