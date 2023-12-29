@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css"
+    />
+    <title>Social Media Tool</title>
+  </head>
+
+  <body class="p-3">
+    <p>
+      Share your thoughts & optionally select date time for creating a tweet on
+      X (formerly Twitter)
+    </p>
+
+    <form id="tweetForm" onsubmit="createTweet()">
+      <div class="form-group">
+        <textarea
+          class="form-control"
+          id="tweetContent"
+          rows="5"
+          placeholder="What's on your mind?"
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="isScheduled"
+          onchange="toggleDatePicker()"
+        />
+        <label class="form-check-label" for="isScheduled">Schedule Tweet</label>
+      </div>
+
+      <div class="form-group" id="scheduleContainer" style="display: none">
+        <div class="input-group date" id="datetimepicker1">
+          <input
+            type="text"
+            id="tweetTimestamp"
+            class="form-control"
+            placeholder="12/29/2023 12:18 AM"
+          />
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Tweet</button>
+      <button type="button" class="btn btn-secondary" onclick="getTweets()">
+        Refresh Tweets
+      </button>
+    </form>
+
+    <div id="tweets" class="mt-5">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Tweet ID</th>
+            <th scope="col">Tweet</th>
+            <th scope="col">Scheduled For</th>
+            <th scope="col">Posted At</th>
+          </tr>
+        </thead>
+        <tbody id="tweetsTableBody"></tbody>
+      </table>
+    </div>
+  </body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1527.0.min.js"></script>
+
+  <script>
+    function toggleDatePicker() {
+      const isChecked = $("#isScheduled").is(":checked");
+      if (isChecked) {
+        $("#scheduleContainer").show();
+        $("#datetimepicker1").datetimepicker();
+      } else {
+        $("#scheduleContainer").hide();
+      }
+    }
+
+    async function createTweet() {
+      event.preventDefault();
+
+      const tweetBody = $("#tweetContent").val();
+      var timestamp = $("#tweetTimestamp").val();
+      const isScheduled = $("#isScheduled").is(":checked");
+
+      if (!isScheduled || timestamp === "") {
+        timestamp = new Date().toISOString();
+      }
+
+      const response = await fetch(
+        "https://precious-intriguing-lentil.glitch.me/tweet",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tweetBody,
+            timestamp: new Date(timestamp).toISOString(),
+          }),
+        }
+      );
+
+      const res = await response.json();
+      if (response.ok) {
+        console.log(res.data);
+        $("#tweetForm")[0].reset();
+        $("#scheduleContainer").hide();
+        getTweets();
+      } else {
+        console.error("Error: " + res.error);
+      }
+
+      return false;
+    }
+
+    async function getTweets() {
+      const response = await fetch(
+        "https://precious-intriguing-lentil.glitch.me/tweets"
+      );
+      const { data: tweets } = await response.json();
+      const tweetsTableBody = $("#tweetsTableBody");
+      tweetsTableBody.empty();
+
+      tweets.forEach((tweet) => {
+        tweetsTableBody.append(
+          `<tr>
+              <td>${tweet.tweetId.S}</td>
+              <td>${tweet.tweetBody.S}</td>
+              <td>${new Date(
+                Number.parseInt(tweet.timestamp.N)
+              ).toLocaleString()}</td>
+              <td>${
+                tweet.PostedOn
+                  ? new Date(Number.parseInt(tweet.PostedOn.N)).toLocaleString()
+                  : " - "
+              }</td>
+            </tr>`
+        );
+      });
+    }
+
+    getTweets();
+  </script>
+</html>
